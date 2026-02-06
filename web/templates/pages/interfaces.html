@@ -1,0 +1,103 @@
+{{define "content"}}
+<div class="space-y-6">
+    <div class="md:flex md:items-center md:justify-between">
+        <div class="min-w-0 flex-1">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+                Network Interfaces
+            </h2>
+        </div>
+    </div>
+
+    <div id="alert-container"></div>
+
+    <div id="interface-table" hx-get="/interfaces/table" hx-trigger="every 5s" hx-swap="innerHTML">
+        {{template "interface_table" .}}
+    </div>
+</div>
+{{end}}
+
+{{define "interface_table"}}
+<div class="card">
+    <div class="table-container">
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>MAC Address</th>
+                        <th>IPv4 Addresses</th>
+                        <th>MTU</th>
+                        <th>RX / TX</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Interfaces}}
+                    <tr>
+                        <td class="font-medium text-gray-900">
+                            <a href="/interfaces/{{.Name}}" class="text-indigo-600 hover:text-indigo-900">{{.Name}}</a>
+                        </td>
+                        <td>{{.Type}}</td>
+                        <td>
+                            {{if eq .State "UP"}}
+                            <span class="badge badge-green">UP</span>
+                            {{else}}
+                            <span class="badge badge-red">DOWN</span>
+                            {{end}}
+                        </td>
+                        <td class="mono text-xs">{{if .MAC}}{{.MAC}}{{else}}-{{end}}</td>
+                        <td class="mono text-xs">
+                            {{if .IPv4Addrs}}
+                                {{range .IPv4Addrs}}
+                                <div>{{.}}</div>
+                                {{end}}
+                            {{else}}
+                            -
+                            {{end}}
+                        </td>
+                        <td>{{.MTU}}</td>
+                        <td class="mono text-xs">
+                            {{if .Stats}}
+                            <span class="text-green-600">{{formatBytes .Stats.RxBytes}}</span> /
+                            <span class="text-blue-600">{{formatBytes .Stats.TxBytes}}</span>
+                            {{else}}
+                            -
+                            {{end}}
+                        </td>
+                        <td>
+                            <div class="flex space-x-2">
+                                {{if eq .State "UP"}}
+                                <button class="btn btn-sm btn-secondary"
+                                        hx-post="/interfaces/{{.Name}}/down"
+                                        hx-target="#alert-container"
+                                        hx-swap="innerHTML"
+                                        data-confirm="Are you sure you want to bring down {{.Name}}?">
+                                    Down
+                                </button>
+                                {{else}}
+                                <button class="btn btn-sm btn-success"
+                                        hx-post="/interfaces/{{.Name}}/up"
+                                        hx-target="#alert-container"
+                                        hx-swap="innerHTML">
+                                    Up
+                                </button>
+                                {{end}}
+                                <a href="/interfaces/{{.Name}}" class="btn btn-sm btn-secondary">Details</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {{else}}
+                    <tr>
+                        <td colspan="8" class="text-center text-gray-500">No interfaces found</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{{end}}
+
+{{template "base" .}}

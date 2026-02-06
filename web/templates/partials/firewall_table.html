@@ -1,0 +1,88 @@
+{{define "firewall_table"}}
+{{range .Chains}}
+<div class="card mb-4">
+    <div class="card-header flex justify-between items-center">
+        <div>
+            <h3 class="text-base font-semibold leading-6 text-gray-900">
+                {{.Name}}
+                {{if ne .Policy "-"}}
+                <span class="ml-2 badge {{if eq .Policy "ACCEPT"}}badge-green{{else if eq .Policy "DROP"}}badge-red{{else}}badge-yellow{{end}}">
+                    {{.Policy}}
+                </span>
+                {{end}}
+            </h3>
+            <p class="text-sm text-gray-500">{{.Packets}} packets, {{formatBytes .Bytes}}</p>
+        </div>
+        <div class="flex space-x-2">
+            <button class="btn btn-sm btn-primary" onclick="openAddRuleModal('{{.Name}}')">Add Rule</button>
+            {{if ne .Policy "-"}}
+            <div class="relative">
+                <select onchange="setPolicy('{{$.CurrentTable}}', '{{.Name}}', this.value)" class="form-select text-sm py-1">
+                    <option value="">Set Policy</option>
+                    <option value="ACCEPT">ACCEPT</option>
+                    <option value="DROP">DROP</option>
+                </select>
+            </div>
+            {{else}}
+            <button class="btn btn-sm btn-danger"
+                    hx-delete="/firewall/chains/{{.Name}}?table={{$.CurrentTable}}"
+                    hx-target="#alert-container"
+                    hx-swap="innerHTML"
+                    data-confirm="Delete chain {{.Name}}?">
+                Delete Chain
+            </button>
+            {{end}}
+        </div>
+    </div>
+    <div class="table-container">
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Target</th>
+                        <th>Protocol</th>
+                        <th>Source</th>
+                        <th>Destination</th>
+                        <th>Options</th>
+                        <th>Packets/Bytes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{$chainName := .Name}}
+                    {{range .Rules}}
+                    <tr>
+                        <td>{{.Num}}</td>
+                        <td>
+                            <span class="badge {{if eq .Target "ACCEPT"}}badge-green{{else if eq .Target "DROP"}}badge-red{{else if eq .Target "REJECT"}}badge-red{{else}}badge-blue{{end}}">
+                                {{.Target}}
+                            </span>
+                        </td>
+                        <td>{{.Protocol}}</td>
+                        <td class="mono text-xs">{{.Source}}</td>
+                        <td class="mono text-xs">{{.Destination}}</td>
+                        <td class="text-xs">{{.Extra}}</td>
+                        <td class="mono text-xs">{{.Packets}} / {{formatBytes .Bytes}}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger"
+                                    hx-delete="/firewall/rules/{{.Num}}?table={{$.CurrentTable}}&chain={{$chainName}}"
+                                    hx-target="#alert-container"
+                                    hx-swap="innerHTML"
+                                    data-confirm="Delete this rule?">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {{else}}
+                    <tr>
+                        <td colspan="8" class="text-center text-gray-500">No rules in this chain</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{{end}}
+{{end}}

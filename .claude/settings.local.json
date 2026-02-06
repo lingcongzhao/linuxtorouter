@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(go mod download:*)",
+      "Bash(sudo apt-get update:*)",
+      "Bash(sudo apt-get:*)",
+      "Bash(go mod tidy:*)",
+      "Bash(make build:*)",
+      "Bash(timeout:*)",
+      "Bash(wc:*)",
+      "Bash(curl:*)",
+      "Bash(sudo pkill:*)",
+      "Bash(COOKIE_JAR=/tmp/cookies.txt)",
+      "Bash(__NEW_LINE_98af189dc8a4681f__ echo \"=== Test 3a: Interfaces page should load ===\")",
+      "Bash(__NEW_LINE_f808eba7052359f6__ echo \"\")",
+      "Bash(__NEW_LINE_6f470eea99d93e52__ echo \"\")",
+      "Bash(ip link:*)",
+      "Bash(__NEW_LINE_9eafe2e6908754df__ echo \"=== Test 4a: Firewall page should load ===\")",
+      "Bash(__NEW_LINE_6733fe24fb224f61__ echo \"\")",
+      "Bash(__NEW_LINE_a66fb0f5b89c918c__ echo \"\")",
+      "Bash(sudo iptables:*)",
+      "Bash(ip route show:*)",
+      "Bash(go build:*)",
+      "Bash(ip rule:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(xargs -I {} sh -c 'echo \"\"=== {} ===\"\" && grep \"\"^func \"\" {}')"
+    ]
+  }
+}

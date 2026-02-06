@@ -1,0 +1,287 @@
+{{define "content"}}
+<div class="space-y-6">
+    <div class="md:flex md:items-center md:justify-between">
+        <div class="min-w-0 flex-1">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+                Firewall (iptables)
+            </h2>
+        </div>
+        <div class="mt-4 flex md:ml-4 md:mt-0 space-x-2">
+            <button class="btn btn-secondary" onclick="document.getElementById('add-chain-modal').classList.remove('hidden')">
+                New Chain
+            </button>
+            <button class="btn btn-primary"
+                    hx-post="/firewall/save"
+                    hx-target="#alert-container"
+                    hx-swap="innerHTML">
+                Save Rules
+            </button>
+        </div>
+    </div>
+
+    <div id="alert-container"></div>
+
+    <!-- Table Selection -->
+    <div class="card">
+        <div class="card-body">
+            <div class="flex flex-wrap gap-2">
+                {{range .Tables}}
+                <a href="/firewall?table={{.}}"
+                   class="px-4 py-2 rounded-md text-sm font-medium {{if eq . $.CurrentTable}}bg-indigo-600 text-white{{else}}bg-gray-100 text-gray-700 hover:bg-gray-200{{end}}">
+                    {{.}}
+                </a>
+                {{end}}
+            </div>
+        </div>
+    </div>
+
+    <!-- Chains and Rules -->
+    <div id="firewall-content">
+        {{template "firewall_chains" .}}
+    </div>
+
+    <!-- Add Rule Modal -->
+    <div id="add-rule-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+        <div class="modal-backdrop" onclick="document.getElementById('add-rule-modal').classList.add('hidden')"></div>
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+                <div class="absolute right-0 top-0 pr-4 pt-4">
+                    <button type="button" onclick="document.getElementById('add-rule-modal').classList.add('hidden')" class="text-gray-400 hover:text-gray-500">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <h3 class="text-lg font-semibold leading-6 text-gray-900 mb-4">Add Firewall Rule</h3>
+                <form hx-post="/firewall/rules" hx-target="#alert-container" hx-swap="innerHTML"
+                      onsubmit="setTimeout(() => { document.getElementById('add-rule-modal').classList.add('hidden'); htmx.trigger('#firewall-content', 'refresh'); }, 100)">
+                    <input type="hidden" name="table" id="rule-table" value="{{.CurrentTable}}">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="form-label">Chain</label>
+                            <select name="chain" id="rule-chain" required class="form-select">
+                                {{range .Chains}}
+                                <option value="{{.Name}}">{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Position (optional)</label>
+                            <input type="number" name="position" min="1" class="form-input" placeholder="End of chain">
+                        </div>
+                        <div>
+                            <label class="form-label">Protocol</label>
+                            <select name="protocol" class="form-select">
+                                <option value="all">All</option>
+                                <option value="tcp">TCP</option>
+                                <option value="udp">UDP</option>
+                                <option value="icmp">ICMP</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Target</label>
+                            <select name="target" required class="form-select">
+                                <option value="ACCEPT">ACCEPT</option>
+                                <option value="DROP">DROP</option>
+                                <option value="REJECT">REJECT</option>
+                                <option value="LOG">LOG</option>
+                                <option value="MASQUERADE">MASQUERADE</option>
+                                <option value="SNAT">SNAT</option>
+                                <option value="DNAT">DNAT</option>
+                                <option value="RETURN">RETURN</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Source</label>
+                            <input type="text" name="source" class="form-input" placeholder="0.0.0.0/0">
+                        </div>
+                        <div>
+                            <label class="form-label">Destination</label>
+                            <input type="text" name="destination" class="form-input" placeholder="0.0.0.0/0">
+                        </div>
+                        <div>
+                            <label class="form-label">Source Port</label>
+                            <input type="text" name="sport" class="form-input" placeholder="Any">
+                        </div>
+                        <div>
+                            <label class="form-label">Destination Port</label>
+                            <input type="text" name="dport" class="form-input" placeholder="Any">
+                        </div>
+                        <div>
+                            <label class="form-label">In Interface</label>
+                            <input type="text" name="in_interface" class="form-input" placeholder="Any">
+                        </div>
+                        <div>
+                            <label class="form-label">Out Interface</label>
+                            <input type="text" name="out_interface" class="form-input" placeholder="Any">
+                        </div>
+                        <div>
+                            <label class="form-label">Connection State</label>
+                            <select name="state" class="form-select">
+                                <option value="">Any</option>
+                                <option value="NEW">NEW</option>
+                                <option value="ESTABLISHED">ESTABLISHED</option>
+                                <option value="RELATED">RELATED</option>
+                                <option value="ESTABLISHED,RELATED">ESTABLISHED,RELATED</option>
+                                <option value="NEW,ESTABLISHED,RELATED">NEW,ESTABLISHED,RELATED</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Comment</label>
+                            <input type="text" name="comment" class="form-input" placeholder="Optional">
+                        </div>
+                        <div class="col-span-2 border-t pt-4 mt-2">
+                            <p class="text-sm text-gray-500 mb-2">NAT Options (for DNAT/SNAT targets)</p>
+                        </div>
+                        <div>
+                            <label class="form-label">To Destination (DNAT)</label>
+                            <input type="text" name="to_destination" class="form-input" placeholder="192.168.1.100:80">
+                        </div>
+                        <div>
+                            <label class="form-label">To Source (SNAT)</label>
+                            <input type="text" name="to_source" class="form-input" placeholder="203.0.113.1">
+                        </div>
+                    </div>
+                    <div class="mt-5 sm:mt-6 flex justify-end space-x-3">
+                        <button type="button" onclick="document.getElementById('add-rule-modal').classList.add('hidden')" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Rule</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Chain Modal -->
+    <div id="add-chain-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+        <div class="modal-backdrop" onclick="document.getElementById('add-chain-modal').classList.add('hidden')"></div>
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md sm:p-6">
+                <h3 class="text-lg font-semibold leading-6 text-gray-900 mb-4">Create New Chain</h3>
+                <form hx-post="/firewall/chains" hx-target="#alert-container" hx-swap="innerHTML"
+                      onsubmit="setTimeout(() => { document.getElementById('add-chain-modal').classList.add('hidden'); location.reload(); }, 100)">
+                    <input type="hidden" name="table" value="{{.CurrentTable}}">
+                    <div class="mb-4">
+                        <label class="form-label">Chain Name</label>
+                        <input type="text" name="chain" required class="form-input" pattern="[A-Za-z0-9_-]+" placeholder="MY_CHAIN">
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="document.getElementById('add-chain-modal').classList.add('hidden')" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function openAddRuleModal(chain) {
+    document.getElementById('rule-chain').value = chain;
+    document.getElementById('add-rule-modal').classList.remove('hidden');
+}
+</script>
+{{end}}
+
+{{define "firewall_chains"}}
+{{range .Chains}}
+<div class="card mb-4">
+    <div class="card-header flex justify-between items-center">
+        <div>
+            <h3 class="text-base font-semibold leading-6 text-gray-900">
+                {{.Name}}
+                {{if ne .Policy "-"}}
+                <span class="ml-2 badge {{if eq .Policy "ACCEPT"}}badge-green{{else if eq .Policy "DROP"}}badge-red{{else}}badge-yellow{{end}}">
+                    {{.Policy}}
+                </span>
+                {{end}}
+            </h3>
+            <p class="text-sm text-gray-500">{{.Packets}} packets, {{formatBytes .Bytes}}</p>
+        </div>
+        <div class="flex space-x-2">
+            <button class="btn btn-sm btn-primary" onclick="openAddRuleModal('{{.Name}}')">Add Rule</button>
+            {{if ne .Policy "-"}}
+            <div class="relative">
+                <select onchange="setPolicy('{{$.CurrentTable}}', '{{.Name}}', this.value)" class="form-select text-sm py-1">
+                    <option value="">Set Policy</option>
+                    <option value="ACCEPT">ACCEPT</option>
+                    <option value="DROP">DROP</option>
+                </select>
+            </div>
+            {{else}}
+            <button class="btn btn-sm btn-danger"
+                    hx-delete="/firewall/chains/{{.Name}}?table={{$.CurrentTable}}"
+                    hx-target="#alert-container"
+                    hx-swap="innerHTML"
+                    data-confirm="Delete chain {{.Name}}? All rules in this chain will be removed.">
+                Delete Chain
+            </button>
+            {{end}}
+        </div>
+    </div>
+    <div class="table-container">
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Target</th>
+                        <th>Protocol</th>
+                        <th>Source</th>
+                        <th>Destination</th>
+                        <th>Options</th>
+                        <th>Packets/Bytes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{$chainName := .Name}}
+                    {{range .Rules}}
+                    <tr>
+                        <td>{{.Num}}</td>
+                        <td>
+                            <span class="badge {{if eq .Target "ACCEPT"}}badge-green{{else if eq .Target "DROP"}}badge-red{{else if eq .Target "REJECT"}}badge-red{{else}}badge-blue{{end}}">
+                                {{.Target}}
+                            </span>
+                        </td>
+                        <td>{{.Protocol}}</td>
+                        <td class="mono text-xs">{{.Source}}</td>
+                        <td class="mono text-xs">{{.Destination}}</td>
+                        <td class="text-xs">{{.Extra}}</td>
+                        <td class="mono text-xs">{{.Packets}} / {{formatBytes .Bytes}}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger"
+                                    hx-delete="/firewall/rules/{{.Num}}?table={{$.CurrentTable}}&chain={{$chainName}}"
+                                    hx-target="#alert-container"
+                                    hx-swap="innerHTML"
+                                    data-confirm="Delete this rule?">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {{else}}
+                    <tr>
+                        <td colspan="8" class="text-center text-gray-500">No rules in this chain</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{{end}}
+
+<script>
+function setPolicy(table, chain, policy) {
+    if (!policy) return;
+    if (!confirm('Set policy for ' + chain + ' to ' + policy + '?')) return;
+
+    fetch('/firewall/chains/' + chain + '/policy', {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'table=' + table + '&policy=' + policy
+    }).then(() => location.reload());
+}
+</script>
+{{end}}
+
+{{template "base" .}}

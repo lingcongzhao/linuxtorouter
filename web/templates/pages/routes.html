@@ -1,0 +1,166 @@
+{{define "content"}}
+<div class="space-y-6">
+    <div class="md:flex md:items-center md:justify-between">
+        <div class="min-w-0 flex-1">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+                Routing Tables
+            </h2>
+        </div>
+        <div class="mt-4 flex md:ml-4 md:mt-0 space-x-2">
+            <button class="btn btn-secondary" onclick="document.getElementById('add-route-modal').classList.remove('hidden')">
+                Add Route
+            </button>
+            <button class="btn btn-primary"
+                    hx-post="/routes/save"
+                    hx-target="#alert-container"
+                    hx-swap="innerHTML">
+                Save Routes
+            </button>
+        </div>
+    </div>
+
+    <div id="alert-container"></div>
+
+    <!-- Table Selection -->
+    <div class="card">
+        <div class="card-body">
+            <div class="flex flex-wrap gap-2">
+                {{range .Tables}}
+                <a href="/routes?table={{.Name}}"
+                   class="px-4 py-2 rounded-md text-sm font-medium {{if eq .Name $.CurrentTable}}bg-indigo-600 text-white{{else}}bg-gray-100 text-gray-700 hover:bg-gray-200{{end}}">
+                    {{.Name}} ({{.ID}})
+                </a>
+                {{end}}
+            </div>
+        </div>
+    </div>
+
+    <!-- Routes Table -->
+    <div id="routes-content" hx-get="/routes/list?table={{.CurrentTable}}" hx-trigger="refresh from:body">
+        {{template "route_table" .}}
+    </div>
+
+    <!-- Add Route Modal -->
+    <div id="add-route-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+        <div class="modal-backdrop" onclick="document.getElementById('add-route-modal').classList.add('hidden')"></div>
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                <div class="absolute right-0 top-0 pr-4 pt-4">
+                    <button type="button" onclick="document.getElementById('add-route-modal').classList.add('hidden')" class="text-gray-400 hover:text-gray-500">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <h3 class="text-lg font-semibold leading-6 text-gray-900 mb-4">Add Route</h3>
+                <form hx-post="/routes" hx-target="#alert-container" hx-swap="innerHTML"
+                      onsubmit="setTimeout(() => { document.getElementById('add-route-modal').classList.add('hidden'); location.reload(); }, 100)">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="form-label">Destination</label>
+                            <input type="text" name="destination" required class="form-input" placeholder="192.168.10.0/24 or default">
+                            <p class="mt-1 text-sm text-gray-500">Use "default" for default route or CIDR notation</p>
+                        </div>
+                        <div>
+                            <label class="form-label">Gateway</label>
+                            <input type="text" name="gateway" class="form-input" placeholder="192.168.1.1">
+                        </div>
+                        <div>
+                            <label class="form-label">Interface</label>
+                            <select name="interface" class="form-select">
+                                <option value="">Select interface</option>
+                                {{range .Interfaces}}
+                                <option value="{{.}}">{{.}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Metric</label>
+                            <input type="number" name="metric" min="0" class="form-input" placeholder="100">
+                        </div>
+                        <div>
+                            <label class="form-label">Routing Table</label>
+                            <select name="table" class="form-select">
+                                {{range .Tables}}
+                                <option value="{{.Name}}" {{if eq .Name $.CurrentTable}}selected{{end}}>{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-5 sm:mt-6 flex justify-end space-x-3">
+                        <button type="button" onclick="document.getElementById('add-route-modal').classList.add('hidden')" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Route</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}
+
+{{define "route_table"}}
+<div class="card">
+    <div class="card-header">
+        <h3 class="text-base font-semibold leading-6 text-gray-900">Table: {{.CurrentTable}}</h3>
+    </div>
+    <div class="table-container">
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Destination</th>
+                        <th>Gateway</th>
+                        <th>Interface</th>
+                        <th>Protocol</th>
+                        <th>Scope</th>
+                        <th>Metric</th>
+                        <th>Source</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Routes}}
+                    <tr>
+                        <td class="font-medium text-gray-900 mono">{{.Destination}}</td>
+                        <td class="mono">{{if .Gateway}}{{.Gateway}}{{else}}-{{end}}</td>
+                        <td>{{if .Interface}}{{.Interface}}{{else}}-{{end}}</td>
+                        <td>
+                            {{if .Protocol}}
+                            <span class="badge badge-gray">{{.Protocol}}</span>
+                            {{end}}
+                        </td>
+                        <td>{{if .Scope}}{{.Scope}}{{else}}-{{end}}</td>
+                        <td>{{if gt .Metric 0}}{{.Metric}}{{else}}-{{end}}</td>
+                        <td class="mono text-xs">{{if .Source}}{{.Source}}{{else}}-{{end}}</td>
+                        <td>
+                            {{if ne .Protocol "kernel"}}
+                            <form hx-delete="/routes" hx-target="#alert-container" hx-swap="innerHTML"
+                                  onsubmit="setTimeout(() => location.reload(), 100)"
+                                  class="inline">
+                                <input type="hidden" name="destination" value="{{.Destination}}">
+                                <input type="hidden" name="gateway" value="{{.Gateway}}">
+                                <input type="hidden" name="interface" value="{{.Interface}}">
+                                <input type="hidden" name="table" value="{{$.CurrentTable}}">
+                                <button type="submit" class="btn btn-sm btn-danger"
+                                        data-confirm="Delete route to {{.Destination}}?">
+                                    Delete
+                                </button>
+                            </form>
+                            {{else}}
+                            <span class="text-gray-400 text-sm">System route</span>
+                            {{end}}
+                        </td>
+                    </tr>
+                    {{else}}
+                    <tr>
+                        <td colspan="8" class="text-center text-gray-500">No routes in this table</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{{end}}
+
+{{template "base" .}}

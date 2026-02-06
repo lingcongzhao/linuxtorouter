@@ -1,0 +1,96 @@
+{{define "nav"}}
+<nav class="bg-gray-800">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <span class="text-white text-xl font-bold">Linux Router</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="/" class="{{if eq .ActivePage "dashboard"}}bg-gray-900 text-white{{else}}text-gray-300 hover:bg-gray-700 hover:text-white{{end}} rounded-md px-3 py-2 text-sm font-medium">
+                            <svg class="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
+                            Dashboard
+                        </a>
+                        <a href="/interfaces" class="{{if eq .ActivePage "interfaces"}}bg-gray-900 text-white{{else}}text-gray-300 hover:bg-gray-700 hover:text-white{{end}} rounded-md px-3 py-2 text-sm font-medium">
+                            <svg class="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+                            </svg>
+                            Interfaces
+                        </a>
+                        <a href="/firewall" class="{{if eq .ActivePage "firewall"}}bg-gray-900 text-white{{else}}text-gray-300 hover:bg-gray-700 hover:text-white{{end}} rounded-md px-3 py-2 text-sm font-medium">
+                            <svg class="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                            Firewall
+                        </a>
+                        <a href="/routes" class="{{if eq .ActivePage "routes"}}bg-gray-900 text-white{{else}}text-gray-300 hover:bg-gray-700 hover:text-white{{end}} rounded-md px-3 py-2 text-sm font-medium">
+                            <svg class="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                            </svg>
+                            Routes
+                        </a>
+                        <a href="/rules" class="{{if eq .ActivePage "rules"}}bg-gray-900 text-white{{else}}text-gray-300 hover:bg-gray-700 hover:text-white{{end}} rounded-md px-3 py-2 text-sm font-medium">
+                            <svg class="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                            </svg>
+                            IP Rules
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden md:block">
+                <div class="ml-4 flex items-center md:ml-6">
+                    <a href="/settings" class="{{if eq .ActivePage "settings"}}bg-gray-900 text-white{{else}}text-gray-300 hover:bg-gray-700 hover:text-white{{end}} rounded-md px-3 py-2 text-sm font-medium">
+                        <svg class="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        Settings
+                    </a>
+                    <div class="ml-3 text-gray-300 text-sm">
+                        {{.User.Username}}
+                    </div>
+                    <form method="POST" action="/logout" class="ml-3">
+                        <button type="submit" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <!-- Mobile menu button -->
+            <div class="-mr-2 flex md:hidden">
+                <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="relative inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white">
+                    <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div class="md:hidden hidden" id="mobile-menu">
+        <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+            <a href="/" class="{{if eq .ActivePage "dashboard"}}bg-gray-900 text-white{{else}}text-gray-300 hover:bg-gray-700 hover:text-white{{end}} block rounded-md px-3 py-2 text-base font-medium">Dashboard</a>
+            <a href="/interfaces" class="{{if eq .ActivePage "interfaces"}}bg-gray-900 text-white{{else}}text-gray-300 hover:bg-gray-700 hover:text-white{{end}} block rounded-md px-3 py-2 text-base font-medium">Interfaces</a>
+            <a href="/firewall" class="{{if eq .ActivePage "firewall"}}bg-gray-900 text-white{{else}}text-gray-300 hover:bg-gray-700 hover:text-white{{end}} block rounded-md px-3 py-2 text-base font-medium">Firewall</a>
+            <a href="/routes" class="{{if eq .ActivePage "routes"}}bg-gray-900 text-white{{else}}text-gray-300 hover:bg-gray-700 hover:text-white{{end}} block rounded-md px-3 py-2 text-base font-medium">Routes</a>
+            <a href="/rules" class="{{if eq .ActivePage "rules"}}bg-gray-900 text-white{{else}}text-gray-300 hover:bg-gray-700 hover:text-white{{end}} block rounded-md px-3 py-2 text-base font-medium">IP Rules</a>
+            <a href="/settings" class="{{if eq .ActivePage "settings"}}bg-gray-900 text-white{{else}}text-gray-300 hover:bg-gray-700 hover:text-white{{end}} block rounded-md px-3 py-2 text-base font-medium">Settings</a>
+        </div>
+        <div class="border-t border-gray-700 pb-3 pt-4">
+            <div class="flex items-center px-5">
+                <div class="text-base font-medium leading-none text-white">{{.User.Username}}</div>
+            </div>
+            <div class="mt-3 space-y-1 px-2">
+                <form method="POST" action="/logout">
+                    <button type="submit" class="block w-full text-left rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+{{end}}
