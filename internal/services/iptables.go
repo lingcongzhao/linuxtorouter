@@ -64,8 +64,8 @@ func (s *IPTablesService) parseChainOutput(output string) ([]models.ChainInfo, e
 	var currentChain *models.ChainInfo
 
 	scanner := bufio.NewScanner(strings.NewReader(output))
-	// Updated regex to handle byte suffixes like K, M, G (e.g., "6477K bytes", "49M bytes")
-	chainHeaderRe := regexp.MustCompile(`^Chain (\S+) \(policy (\S+) (\d+) packets, (\d+[KMG]?) bytes\)`)
+	// Updated regex to handle K/M/G suffixes for both packets and bytes (e.g., "253K packets, 33M bytes")
+	chainHeaderRe := regexp.MustCompile(`^Chain (\S+) \(policy (\S+) (\d+[KMG]?) packets, (\d+[KMG]?) bytes\)`)
 	chainHeaderNoPolicy := regexp.MustCompile(`^Chain (\S+) \((\d+) references\)`)
 
 	for scanner.Scan() {
@@ -76,8 +76,8 @@ func (s *IPTablesService) parseChainOutput(output string) ([]models.ChainInfo, e
 			if currentChain != nil {
 				chains = append(chains, *currentChain)
 			}
-			packets, _ := strconv.ParseUint(matches[3], 10, 64)
-			bytesVal := parseBytesSuffix(matches[4])
+			packets := parseSuffixedNumber(matches[3])
+			bytesVal := parseSuffixedNumber(matches[4])
 			currentChain = &models.ChainInfo{
 				Name:    matches[1],
 				Policy:  matches[2],
@@ -120,8 +120,8 @@ func (s *IPTablesService) parseChainOutput(output string) ([]models.ChainInfo, e
 	return chains, nil
 }
 
-// parseBytesSuffix parses byte counts with K/M/G suffixes (e.g., "6477K", "49M")
-func parseBytesSuffix(s string) uint64 {
+// parseSuffixedNumber parses numbers with K/M/G suffixes (e.g., "6477K", "49M", "253K")
+func parseSuffixedNumber(s string) uint64 {
 	if s == "" {
 		return 0
 	}
