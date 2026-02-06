@@ -10,10 +10,10 @@
             </p>
         </div>
         <div class="mt-4 flex md:ml-4 md:mt-0 space-x-2">
-            <button class="btn btn-secondary" onclick="document.getElementById('add-rule-modal').classList.remove('hidden')">
-                Add Rule
+            <button class="btn btn-info" onclick="document.getElementById('add-rule-modal').classList.remove('hidden')">
+                + Add Rule
             </button>
-            <button class="btn btn-primary"
+            <button class="btn btn-success"
                     hx-post="/rules/save"
                     hx-target="#alert-container"
                     hx-swap="innerHTML">

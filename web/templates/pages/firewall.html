@@ -7,10 +7,10 @@
             </h2>
         </div>
         <div class="mt-4 flex md:ml-4 md:mt-0 space-x-2">
-            <button class="btn btn-secondary" onclick="document.getElementById('add-chain-modal').classList.remove('hidden')">
-                New Chain
+            <button class="btn btn-info" onclick="document.getElementById('add-chain-modal').classList.remove('hidden')">
+                + New Chain
             </button>
-            <button class="btn btn-primary"
+            <button class="btn btn-success"
                     hx-post="/firewall/save"
                     hx-target="#alert-container"
                     hx-swap="innerHTML">

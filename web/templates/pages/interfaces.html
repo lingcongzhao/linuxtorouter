@@ -69,11 +69,11 @@
                         <td>
                             <div class="flex space-x-2">
                                 {{if eq .State "UP"}}
-                                <button class="btn btn-sm btn-secondary"
+                                <button class="btn btn-sm btn-warning"
                                         hx-post="/interfaces/{{.Name}}/down"
                                         hx-target="#alert-container"
                                         hx-swap="innerHTML"
-                                        data-confirm="Are you sure you want to bring down {{.Name}}?">
+                                        hx-confirm="Are you sure you want to bring down {{.Name}}?">
                                     Down
                                 </button>
                                 {{else}}
@@ -84,7 +84,7 @@
                                     Up
                                 </button>
                                 {{end}}
-                                <a href="/interfaces/{{.Name}}" class="btn btn-sm btn-secondary">Details</a>
+                                <a href="/interfaces/{{.Name}}" class="btn btn-sm btn-info">Details</a>
                             </div>
                         </td>
                     </tr>

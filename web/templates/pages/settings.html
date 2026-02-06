@@ -49,7 +49,7 @@
                     Save all current network configurations (firewall, routes, rules) to persistent storage.
                 </p>
                 <div class="space-y-4">
-                    <button class="btn btn-primary w-full"
+                    <button class="btn btn-success w-full"
                             hx-post="/settings/save-all"
                             hx-target="#alert-container"
                             hx-swap="innerHTML">
@@ -58,11 +58,11 @@
                     <div class="border-t pt-4">
                         <p class="text-sm text-gray-600 mb-2">Export/Import configuration backup:</p>
                         <div class="flex space-x-2">
-                            <a href="/settings/export" class="btn btn-secondary flex-1 text-center">
+                            <a href="/settings/export" class="btn btn-info flex-1 text-center">
                                 Export Config
                             </a>
                             <button type="button" onclick="document.getElementById('import-modal').classList.remove('hidden')"
-                                    class="btn btn-secondary flex-1">
+                                    class="btn btn-warning flex-1">
                                 Import Config
                             </button>
                         </div>
@@ -77,8 +77,8 @@
     <div class="card">
         <div class="card-header flex justify-between items-center">
             <h3 class="text-base font-semibold leading-6 text-gray-900">User Management</h3>
-            <button class="btn btn-primary btn-sm" onclick="document.getElementById('add-user-modal').classList.remove('hidden')">
-                Add User
+            <button class="btn btn-info btn-sm" onclick="document.getElementById('add-user-modal').classList.remove('hidden')">
+                + Add User
             </button>
         </div>
         <div class="table-container">
