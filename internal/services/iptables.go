@@ -149,27 +149,30 @@ func parseSuffixedNumber(s string) uint64 {
 
 func (s *IPTablesService) parseRuleLine(line string) *models.FirewallRule {
 	fields := strings.Fields(line)
-	if len(fields) < 9 {
+	// iptables -L -n -v --line-numbers output format:
+	// num pkts bytes target prot opt in out source destination [extra...]
+	// 0   1    2     3      4    5   6  7   8      9           10+
+	if len(fields) < 10 {
 		return nil
 	}
 
 	num, _ := strconv.Atoi(fields[0])
-	packets, _ := strconv.ParseUint(fields[1], 10, 64)
-	bytes, _ := strconv.ParseUint(fields[2], 10, 64)
+	packets := parseSuffixedNumber(fields[1])
+	bytesVal := parseSuffixedNumber(fields[2])
 
 	rule := &models.FirewallRule{
 		Num:         num,
 		Packets:     packets,
-		Bytes:       bytes,
+		Bytes:       bytesVal,
 		Target:      fields[3],
 		Protocol:    fields[4],
 		Opt:         fields[5],
-		Source:      fields[7],
-		Destination: fields[8],
+		Source:      fields[8],
+		Destination: fields[9],
 	}
 
-	if len(fields) > 9 {
-		rule.Extra = strings.Join(fields[9:], " ")
+	if len(fields) > 10 {
+		rule.Extra = strings.Join(fields[10:], " ")
 	}
 
 	return rule

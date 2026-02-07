@@ -198,7 +198,7 @@ function openAddRuleModal(chain) {
             <p class="text-sm text-gray-500">{{.Packets}} packets, {{formatBytes .Bytes}}</p>
         </div>
         <div class="flex space-x-2">
-            <button class="btn btn-sm btn-primary" onclick="openAddRuleModal('{{.Name}}')">Add Rule</button>
+            <button class="btn btn-sm btn-info" onclick="openAddRuleModal('{{.Name}}')">+ Add Rule</button>
             {{if ne .Policy "-"}}
             <div class="relative">
                 <select onchange="setPolicy('{{$.CurrentTable}}', '{{.Name}}', this.value)" class="form-select text-sm py-1">
@@ -246,7 +246,7 @@ function openAddRuleModal(chain) {
                         <td>{{.Protocol}}</td>
                         <td class="mono text-xs">{{.Source}}</td>
                         <td class="mono text-xs">{{.Destination}}</td>
-                        <td class="text-xs">{{.Extra}}</td>
+                        <td class="text-xs" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Extra}}">{{.Extra}}</td>
                         <td class="mono text-xs">{{.Packets}} / {{formatBytes .Bytes}}</td>
                         <td>
                             <button class="btn btn-sm btn-danger"

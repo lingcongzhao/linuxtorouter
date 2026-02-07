@@ -62,7 +62,7 @@
                         <td>{{.Protocol}}</td>
                         <td class="mono text-xs">{{.Source}}</td>
                         <td class="mono text-xs">{{.Destination}}</td>
-                        <td class="text-xs">{{.Extra}}</td>
+                        <td class="text-xs" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Extra}}">{{.Extra}}</td>
                         <td class="mono text-xs">{{.Packets}} / {{formatBytes .Bytes}}</td>
                         <td>
                             <button class="btn btn-sm btn-danger"
