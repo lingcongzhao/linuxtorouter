@@ -251,7 +251,7 @@ function openAddRuleModal(chain) {
                         <td>{{if eq .Out "*"}}-{{else}}{{.Out}}{{end}}</td>
                         <td class="mono text-xs">{{.Source}}</td>
                         <td class="mono text-xs">{{.Destination}}</td>
-                        <td class="text-xs">{{if .Extra}}{{.Extra}}{{else}}-{{end}}</td>
+                        <td class="text-xs" style="max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Extra}}">{{if .Extra}}{{.Extra}}{{else}}-{{end}}</td>
                         <td class="text-xs">{{if .Comment}}<span style="cursor: help;" title="{{.Comment}}">more...</span>{{else}}-{{end}}</td>
                         <td class="mono text-xs">{{.Packets}} / {{formatBytes .Bytes}}</td>
                         <td>
