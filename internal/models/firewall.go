@@ -28,6 +28,7 @@ type FirewallRule struct {
 	Source      string `json:"source"`
 	Destination string `json:"destination"`
 	Extra       string `json:"extra"`
+	Comment     string `json:"comment"`
 	Packets     uint64 `json:"packets"`
 	Bytes       uint64 `json:"bytes"`
 }

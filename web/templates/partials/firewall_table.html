@@ -47,6 +47,7 @@
                         <th>Source</th>
                         <th>Destination</th>
                         <th>Options</th>
+                        <th>Comment</th>
                         <th>Packets/Bytes</th>
                         <th>Actions</th>
                     </tr>
@@ -66,7 +67,8 @@
                         <td>{{if eq .Out "*"}}-{{else}}{{.Out}}{{end}}</td>
                         <td class="mono text-xs">{{.Source}}</td>
                         <td class="mono text-xs">{{.Destination}}</td>
-                        <td class="text-xs" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Extra}}">{{.Extra}}</td>
+                        <td class="text-xs">{{if .Extra}}{{.Extra}}{{else}}-{{end}}</td>
+                        <td class="text-xs">{{if .Comment}}<span style="cursor: help;" title="{{.Comment}}">more...</span>{{else}}-{{end}}</td>
                         <td class="mono text-xs">{{.Packets}} / {{formatBytes .Bytes}}</td>
                         <td>
                             <button class="btn btn-sm btn-danger"
@@ -80,7 +82,7 @@
                     </tr>
                     {{else}}
                     <tr>
-                        <td colspan="10" class="text-center text-gray-500">No rules in this chain</td>
+                        <td colspan="11" class="text-center text-gray-500">No rules in this chain</td>
                     </tr>
                     {{end}}
                 </tbody>

@@ -174,10 +174,44 @@ func (s *IPTablesService) parseRuleLine(line string) *models.FirewallRule {
 	}
 
 	if len(fields) > 10 {
-		rule.Extra = strings.Join(fields[10:], " ")
+		extra := strings.Join(fields[10:], " ")
+		// Extract comment (content between /* and */)
+		rule.Extra, rule.Comment = extractComment(extra)
 	}
 
 	return rule
+}
+
+// extractComment separates comment from extra options
+// Returns (options without comment, comment text)
+func extractComment(extra string) (string, string) {
+	startIdx := strings.Index(extra, "/*")
+	if startIdx == -1 {
+		return extra, ""
+	}
+
+	endIdx := strings.LastIndex(extra, "*/")
+	if endIdx == -1 || endIdx < startIdx {
+		return extra, ""
+	}
+
+	// Extract comment text (without /* and */)
+	comment := strings.TrimSpace(extra[startIdx+2 : endIdx])
+
+	// Build options without comment
+	options := strings.TrimSpace(extra[:startIdx])
+	if endIdx+2 < len(extra) {
+		remaining := strings.TrimSpace(extra[endIdx+2:])
+		if remaining != "" {
+			if options != "" {
+				options = options + " " + remaining
+			} else {
+				options = remaining
+			}
+		}
+	}
+
+	return options, comment
 }
 
 func (s *IPTablesService) AddRule(input models.FirewallRuleInput) error {
