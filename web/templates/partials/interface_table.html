@@ -51,7 +51,7 @@
                         <td>
                             <div class="flex space-x-2">
                                 {{if eq .State "UP"}}
-                                <button class="btn btn-sm btn-warning" style="min-width: 50px;"
+                                <button class="btn btn-sm btn-warning" style="width: 60px; text-align: center;"
                                         hx-post="/interfaces/{{.Name}}/down"
                                         hx-target="#alert-container"
                                         hx-swap="innerHTML"
@@ -59,7 +59,7 @@
                                     Down
                                 </button>
                                 {{else}}
-                                <button class="btn btn-sm btn-success" style="min-width: 50px;"
+                                <button class="btn btn-sm btn-success" style="width: 60px; text-align: center;"
                                         hx-post="/interfaces/{{.Name}}/up"
                                         hx-target="#alert-container"
                                         hx-swap="innerHTML">
