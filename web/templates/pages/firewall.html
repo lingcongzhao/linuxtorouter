@@ -275,16 +275,15 @@ function setPolicy(table, chain, policy) {
     <table class="data-table" style="table-layout: fixed; width: 100%; min-width: 900px;">
         <colgroup>
             <col style="width: 50px;">   <!-- # -->
-            <col style="width: 90px;">   <!-- Target -->
+            <col style="width: 100px;">  <!-- Target -->
             <col style="width: 55px;">   <!-- Protocol -->
             <col style="width: 55px;">   <!-- In -->
             <col style="width: 55px;">   <!-- Out -->
             <col style="width: 120px;">  <!-- Source -->
             <col style="width: 120px;">  <!-- Destination -->
-            <col style="width: 130px;">  <!-- Options -->
-            <col style="width: 65px;">   <!-- Comment -->
+            <col style="width: 180px;">  <!-- Options -->
             <col style="width: 95px;">   <!-- Packets/Bytes -->
-            <col style="width: 65px;">   <!-- Actions -->
+            <col style="width: 70px;">   <!-- Actions -->
         </colgroup>
         <thead>
             <tr>
@@ -296,7 +295,6 @@ function setPolicy(table, chain, policy) {
                 <th>Source</th>
                 <th>Destination</th>
                 <th>Options</th>
-                <th>Comment</th>
                 <th>Pkts/Bytes</th>
                 <th>Actions</th>
             </tr>
@@ -306,8 +304,8 @@ function setPolicy(table, chain, policy) {
             {{$currentTable := .CurrentTable}}
             {{range .Chain.Rules}}
             <tr>
-                <td>{{.Num}}</td>
-                <td>
+                <td {{if .Comment}}style="cursor: help;" title="{{.Comment}}"{{end}}>{{.Num}}</td>
+                <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Target}}">
                     <span class="badge {{if eq .Target "ACCEPT"}}badge-green{{else if eq .Target "DROP"}}badge-red{{else if eq .Target "REJECT"}}badge-red{{else}}badge-blue{{end}}" style="font-size: 0.7rem;">
                         {{.Target}}
                     </span>
@@ -318,21 +316,20 @@ function setPolicy(table, chain, policy) {
                 <td class="mono text-xs" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Source}}">{{.Source}}</td>
                 <td class="mono text-xs" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Destination}}">{{.Destination}}</td>
                 <td class="text-xs" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Extra}}">{{if .Extra}}{{.Extra}}{{else}}-{{end}}</td>
-                <td class="text-xs">{{if .Comment}}<span style="cursor: help; color: #3b82f6;" title="{{.Comment}}">more...</span>{{else}}-{{end}}</td>
                 <td class="mono text-xs">{{.Packets}}/{{formatBytes .Bytes}}</td>
                 <td>
-                    <button class="btn btn-sm btn-danger" style="padding: 2px 6px; font-size: 0.7rem;"
+                    <button class="btn btn-sm btn-danger"
                             hx-delete="/firewall/rules/{{.Num}}?table={{$currentTable}}&chain={{$chainName}}"
                             hx-target="#alert-container"
                             hx-swap="innerHTML"
                             hx-confirm="Delete this rule?">
-                        Del
+                        Delete
                     </button>
                 </td>
             </tr>
             {{else}}
             <tr>
-                <td colspan="11" class="text-center text-gray-500">No rules in this chain</td>
+                <td colspan="10" class="text-center text-gray-500">No rules in this chain</td>
             </tr>
             {{end}}
         </tbody>
