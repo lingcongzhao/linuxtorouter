@@ -23,6 +23,8 @@ type FirewallRule struct {
 	Target      string `json:"target"`
 	Protocol    string `json:"protocol"`
 	Opt         string `json:"opt"`
+	In          string `json:"in"`
+	Out         string `json:"out"`
 	Source      string `json:"source"`
 	Destination string `json:"destination"`
 	Extra       string `json:"extra"`

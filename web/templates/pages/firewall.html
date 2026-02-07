@@ -226,6 +226,8 @@ function openAddRuleModal(chain) {
                         <th>#</th>
                         <th>Target</th>
                         <th>Protocol</th>
+                        <th>In</th>
+                        <th>Out</th>
                         <th>Source</th>
                         <th>Destination</th>
                         <th>Options</th>
@@ -244,6 +246,8 @@ function openAddRuleModal(chain) {
                             </span>
                         </td>
                         <td>{{.Protocol}}</td>
+                        <td>{{if eq .In "*"}}-{{else}}{{.In}}{{end}}</td>
+                        <td>{{if eq .Out "*"}}-{{else}}{{.Out}}{{end}}</td>
                         <td class="mono text-xs">{{.Source}}</td>
                         <td class="mono text-xs">{{.Destination}}</td>
                         <td class="text-xs" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Extra}}">{{.Extra}}</td>
@@ -253,14 +257,14 @@ function openAddRuleModal(chain) {
                                     hx-delete="/firewall/rules/{{.Num}}?table={{$.CurrentTable}}&chain={{$chainName}}"
                                     hx-target="#alert-container"
                                     hx-swap="innerHTML"
-                                    data-confirm="Delete this rule?">
+                                    hx-confirm="Delete this rule?">
                                 Delete
                             </button>
                         </td>
                     </tr>
                     {{else}}
                     <tr>
-                        <td colspan="8" class="text-center text-gray-500">No rules in this chain</td>
+                        <td colspan="10" class="text-center text-gray-500">No rules in this chain</td>
                     </tr>
                     {{end}}
                 </tbody>

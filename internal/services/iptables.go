@@ -167,6 +167,8 @@ func (s *IPTablesService) parseRuleLine(line string) *models.FirewallRule {
 		Target:      fields[3],
 		Protocol:    fields[4],
 		Opt:         fields[5],
+		In:          fields[6],
+		Out:         fields[7],
 		Source:      fields[8],
 		Destination: fields[9],
 	}
