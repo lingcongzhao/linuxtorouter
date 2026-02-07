@@ -31,6 +31,7 @@ func NewFirewallHandler(templates TemplateExecutor, iptablesService *services.IP
 func (h *FirewallHandler) List(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUser(r)
 	table := r.URL.Query().Get("table")
+	selectedChainName := r.URL.Query().Get("chain")
 	if table == "" {
 		table = "filter"
 	}
@@ -41,13 +42,34 @@ func (h *FirewallHandler) List(w http.ResponseWriter, r *http.Request) {
 		chains = []models.ChainInfo{}
 	}
 
+	// Separate system chains from custom chains based on table
+	systemChainNames := getSystemChains(table)
+	var systemChains, customChains []models.ChainInfo
+	var selectedChain *models.ChainInfo
+
+	for i := range chains {
+		if isSystemChain(chains[i].Name, systemChainNames) {
+			systemChains = append(systemChains, chains[i])
+		} else {
+			customChains = append(customChains, chains[i])
+			// Check if this is the selected custom chain
+			if chains[i].Name == selectedChainName {
+				selectedChain = &chains[i]
+			}
+		}
+	}
+
 	data := map[string]interface{}{
-		"Title":        "Firewall",
-		"ActivePage":   "firewall",
-		"User":         user,
-		"Chains":       chains,
-		"CurrentTable": table,
-		"Tables":       []string{"filter", "nat", "mangle", "raw"},
+		"Title":               "Firewall",
+		"ActivePage":          "firewall",
+		"User":                user,
+		"Chains":              chains,
+		"SystemChains":        systemChains,
+		"CustomChains":        customChains,
+		"SelectedChain":       selectedChain,
+		"SelectedCustomChain": selectedChainName,
+		"CurrentTable":        table,
+		"Tables":              []string{"filter", "nat", "mangle", "raw"},
 	}
 
 	if err := h.templates.ExecuteTemplate(w, "firewall.html", data); err != nil {
@@ -56,37 +78,70 @@ func (h *FirewallHandler) List(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// getSystemChains returns the built-in chain names for each iptables table
+func getSystemChains(table string) []string {
+	switch table {
+	case "filter":
+		return []string{"INPUT", "FORWARD", "OUTPUT"}
+	case "nat":
+		return []string{"PREROUTING", "INPUT", "OUTPUT", "POSTROUTING"}
+	case "mangle":
+		return []string{"PREROUTING", "INPUT", "FORWARD", "OUTPUT", "POSTROUTING"}
+	case "raw":
+		return []string{"PREROUTING", "OUTPUT"}
+	default:
+		return []string{}
+	}
+}
+
+// isSystemChain checks if a chain name is a system chain
+func isSystemChain(name string, systemChains []string) bool {
+	for _, sc := range systemChains {
+		if name == sc {
+			return true
+		}
+	}
+	return false
+}
+
 func (h *FirewallHandler) GetRules(w http.ResponseWriter, r *http.Request) {
 	table := r.URL.Query().Get("table")
-	chain := r.URL.Query().Get("chain")
+	selectedChainName := r.URL.Query().Get("chain")
 
 	if table == "" {
 		table = "filter"
 	}
 
-	var chainInfo *models.ChainInfo
-	var err error
-
-	if chain != "" {
-		chainInfo, err = h.iptablesService.GetChain(table, chain)
-	}
-
+	chains, err := h.iptablesService.ListChains(table)
 	if err != nil {
-		log.Printf("Failed to get chain: %v", err)
+		log.Printf("Failed to list chains: %v", err)
 		h.renderAlert(w, "error", "Failed to get rules: "+err.Error())
 		return
 	}
 
-	chains, err := h.iptablesService.ListChains(table)
-	if err != nil {
-		log.Printf("Failed to list chains: %v", err)
+	// Separate system chains from custom chains
+	systemChainNames := getSystemChains(table)
+	var systemChains, customChains []models.ChainInfo
+	var selectedChain *models.ChainInfo
+
+	for i := range chains {
+		if isSystemChain(chains[i].Name, systemChainNames) {
+			systemChains = append(systemChains, chains[i])
+		} else {
+			customChains = append(customChains, chains[i])
+			if chains[i].Name == selectedChainName {
+				selectedChain = &chains[i]
+			}
+		}
 	}
 
 	data := map[string]interface{}{
-		"Chains":        chains,
-		"CurrentTable":  table,
-		"CurrentChain":  chain,
-		"SelectedChain": chainInfo,
+		"Chains":              chains,
+		"SystemChains":        systemChains,
+		"CustomChains":        customChains,
+		"SelectedChain":       selectedChain,
+		"SelectedCustomChain": selectedChainName,
+		"CurrentTable":        table,
 	}
 
 	if err := h.templates.ExecuteTemplate(w, "firewall_table.html", data); err != nil {
