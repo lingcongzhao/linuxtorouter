@@ -75,7 +75,7 @@
     <table class="data-table" style="table-layout: fixed; width: 100%; min-width: 900px;">
         <colgroup>
             <col style="width: 3em;">    <!-- # (5 chars) -->
-            <col style="width: 100px;">  <!-- Target -->
+            <col style="width: 10ch;">   <!-- Target (10 chars) -->
             <col style="width: 8ch;">    <!-- Protocol (8 chars) -->
             <col style="width: 10ch;">   <!-- In (10 chars) -->
             <col style="width: 10ch;">   <!-- Out (10 chars) -->
@@ -105,14 +105,14 @@
             {{range .Chain.Rules}}
             <tr>
                 <td {{if .Comment}}style="cursor: help;" title="{{.Comment}}"{{end}}>{{.Num}}</td>
-                <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Target}}">
+                <td style="max-width: 10ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Target}}">
                     <span class="badge {{if eq .Target "ACCEPT"}}badge-green{{else if eq .Target "DROP"}}badge-red{{else if eq .Target "REJECT"}}badge-red{{else}}badge-blue{{end}}" style="font-size: 0.7rem;">
                         {{.Target}}
                     </span>
                 </td>
                 <td class="text-xs">{{.Protocol}}</td>
-                <td class="text-xs">{{if eq .In "*"}}-{{else}}{{.In}}{{end}}</td>
-                <td class="text-xs">{{if eq .Out "*"}}-{{else}}{{.Out}}{{end}}</td>
+                <td class="text-xs" style="max-width: 10ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.In}}">{{if eq .In "*"}}-{{else}}{{.In}}{{end}}</td>
+                <td class="text-xs" style="max-width: 10ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Out}}">{{if eq .Out "*"}}-{{else}}{{.Out}}{{end}}</td>
                 <td class="mono text-xs" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Source}}">{{.Source}}</td>
                 <td class="mono text-xs" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Destination}}">{{.Destination}}</td>
                 <td class="text-xs" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Extra}}">{{if .Extra}}{{.Extra}}{{else}}-{{end}}</td>
