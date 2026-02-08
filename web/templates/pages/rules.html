@@ -25,7 +25,10 @@
     <div id="alert-container"></div>
 
     <!-- Rules Table -->
-    <div id="rules-content">
+    <div id="rules-content"
+         hx-get="/rules/list"
+         hx-trigger="every 10s"
+         hx-swap="innerHTML">
         {{template "rule_table" .}}
     </div>
 

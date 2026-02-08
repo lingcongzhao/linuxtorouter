@@ -48,7 +48,10 @@
     </div>
 
     <!-- System Chains -->
-    <div id="firewall-content">
+    <div id="firewall-content"
+         hx-get="/firewall/rules?table={{.CurrentTable}}{{if .SelectedChainName}}&chain={{.SelectedChainName}}{{end}}"
+         hx-trigger="every 10s"
+         hx-swap="innerHTML">
         {{template "firewall_chains" .}}
     </div>
 

@@ -36,7 +36,10 @@
     </div>
 
     <!-- Routes Table -->
-    <div id="routes-content" hx-get="/routes/list?table={{.CurrentTable}}" hx-trigger="refresh from:body">
+    <div id="routes-content"
+         hx-get="/routes/list?table={{.CurrentTable}}"
+         hx-trigger="every 10s, refresh from:body"
+         hx-swap="innerHTML">
         {{template "route_table" .}}
     </div>
 
