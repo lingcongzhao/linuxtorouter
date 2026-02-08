@@ -10,7 +10,7 @@
 
     <div id="alert-container"></div>
 
-    <div id="interface-table" hx-get="/interfaces/table" hx-trigger="every 10s" hx-swap="innerHTML">
+    <div id="interface-table" hx-get="/interfaces/table" hx-trigger="every 10s, refresh from:body" hx-swap="innerHTML">
         {{template "interface_table" .}}
     </div>
 </div>

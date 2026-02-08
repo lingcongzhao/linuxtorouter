@@ -388,6 +388,9 @@ func (h *FirewallHandler) FlushChain(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *FirewallHandler) renderAlert(w http.ResponseWriter, alertType, message string) {
+	if alertType == "success" {
+		w.Header().Set("HX-Trigger", "refresh")
+	}
 	data := map[string]interface{}{
 		"Type":    alertType,
 		"Message": message,

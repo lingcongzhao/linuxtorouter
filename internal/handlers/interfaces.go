@@ -155,12 +155,8 @@ func (h *InterfacesHandler) RemoveAddress(w http.ResponseWriter, r *http.Request
 	user := middleware.GetUser(r)
 	name := chi.URLParam(r, "name")
 
-	if err := r.ParseForm(); err != nil {
-		h.renderAlert(w, "error", "Invalid form data")
-		return
-	}
-
-	address := strings.TrimSpace(r.FormValue("address"))
+	// Use query parameters for DELETE requests
+	address := strings.TrimSpace(r.URL.Query().Get("address"))
 	if address == "" {
 		h.renderAlert(w, "error", "Address is required")
 		return
@@ -187,8 +183,8 @@ func (h *InterfacesHandler) SetMTU(w http.ResponseWriter, r *http.Request) {
 
 	mtuStr := strings.TrimSpace(r.FormValue("mtu"))
 	mtu, err := strconv.Atoi(mtuStr)
-	if err != nil || mtu < 68 || mtu > 65535 {
-		h.renderAlert(w, "error", "Invalid MTU value (must be between 68 and 65535)")
+	if err != nil || mtu < 68 || mtu > 65536 {
+		h.renderAlert(w, "error", "Invalid MTU value (must be between 68 and 65536)")
 		return
 	}
 
@@ -234,6 +230,9 @@ func (h *InterfacesHandler) GetTable(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *InterfacesHandler) renderAlert(w http.ResponseWriter, alertType, message string) {
+	if alertType == "success" {
+		w.Header().Set("HX-Trigger", "refresh")
+	}
 	data := map[string]interface{}{
 		"Type":    alertType,
 		"Message": message,

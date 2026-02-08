@@ -50,7 +50,7 @@
     <!-- System Chains -->
     <div id="firewall-content"
          hx-get="/firewall/rules?table={{.CurrentTable}}{{if .SelectedChainName}}&chain={{.SelectedChainName}}{{end}}"
-         hx-trigger="every 10s"
+         hx-trigger="every 10s, refresh from:body"
          hx-swap="innerHTML">
         {{template "firewall_chains" .}}
     </div>
@@ -301,7 +301,8 @@ function setPolicy(table, chain, policy) {
             <col>                        <!-- Destination -->
             <col style="width: 135px;">  <!-- Options -->
             <col style="width: 10em;">   <!-- Packets/Bytes (+1/3) -->
-            <col>                        <!-- Actions -->
+            <col style="width: 70px;">   <!-- Actions -->
+            <col style="width: 5ch;">    <!-- Spacer -->
         </colgroup>
         <thead>
             <tr>
@@ -314,7 +315,8 @@ function setPolicy(table, chain, policy) {
                 <th>Destination</th>
                 <th>Options</th>
                 <th>Pkts/Bytes</th>
-                <th>Actions</th>
+                <th class="text-right">Actions</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -335,7 +337,7 @@ function setPolicy(table, chain, policy) {
                 <td class="mono text-xs" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Destination}}">{{.Destination}}</td>
                 <td class="text-xs" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Extra}}">{{if .Extra}}{{.Extra}}{{else}}-{{end}}</td>
                 <td class="mono text-xs">{{.Packets}}/{{formatBytes .Bytes}}</td>
-                <td>
+                <td class="text-right">
                     <button class="btn btn-sm btn-danger"
                             hx-delete="/firewall/rules/{{.Num}}?table={{$currentTable}}&chain={{$chainName}}"
                             hx-target="#alert-container"
@@ -344,10 +346,11 @@ function setPolicy(table, chain, policy) {
                         Delete
                     </button>
                 </td>
+                <td></td>
             </tr>
             {{else}}
             <tr>
-                <td colspan="10" class="text-center text-gray-500">No rules in this chain</td>
+                <td colspan="11" class="text-center text-gray-500">No rules in this chain</td>
             </tr>
             {{end}}
         </tbody>

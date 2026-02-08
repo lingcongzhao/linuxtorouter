@@ -27,7 +27,7 @@
     <!-- Rules Table -->
     <div id="rules-content"
          hx-get="/rules/list"
-         hx-trigger="every 10s"
+         hx-trigger="every 10s, refresh from:body"
          hx-swap="innerHTML">
         {{template "rule_table" .}}
     </div>

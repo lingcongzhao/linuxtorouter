@@ -46,6 +46,11 @@
 
     <div id="alert-container"></div>
 
+    <div id="interface-detail-content"
+         hx-get="/interfaces/{{.Interface.Name}}"
+         hx-trigger="refresh from:body"
+         hx-select="#interface-detail-content"
+         hx-swap="outerHTML">
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <!-- Interface Details -->
         <div class="card">
@@ -140,11 +145,10 @@
                     <li class="py-3 flex justify-between items-center">
                         <span class="mono">{{.}}</span>
                         <button class="btn btn-sm btn-danger"
-                                hx-delete="/interfaces/{{$.Interface.Name}}/addr"
-                                hx-vals='{"address": "{{.}}"}'
+                                hx-delete="/interfaces/{{$.Interface.Name}}/addr?address={{.}}"
                                 hx-target="#alert-container"
                                 hx-swap="innerHTML"
-                                data-confirm="Remove address {{.}}?">
+                                hx-confirm="Remove address {{.}}?">
                             Remove
                         </button>
                     </li>
@@ -172,11 +176,10 @@
                     <li class="py-3 flex justify-between items-center">
                         <span class="mono text-xs">{{.}}</span>
                         <button class="btn btn-sm btn-danger"
-                                hx-delete="/interfaces/{{$.Interface.Name}}/addr"
-                                hx-vals='{"address": "{{.}}"}'
+                                hx-delete="/interfaces/{{$.Interface.Name}}/addr?address={{.}}"
                                 hx-target="#alert-container"
                                 hx-swap="innerHTML"
-                                data-confirm="Remove address {{.}}?">
+                                hx-confirm="Remove address {{.}}?">
                             Remove
                         </button>
                     </li>
@@ -196,13 +199,14 @@
                 <form class="flex gap-4 items-end" hx-put="/interfaces/{{.Interface.Name}}/mtu" hx-target="#alert-container" hx-swap="innerHTML">
                     <div class="flex-1">
                         <label for="mtu" class="form-label">MTU Size</label>
-                        <input type="number" name="mtu" id="mtu" value="{{.Interface.MTU}}" min="68" max="65535" required class="form-input">
+                        <input type="number" name="mtu" id="mtu" value="{{.Interface.MTU}}" min="68" max="65536" required class="form-input">
                     </div>
                     <button type="submit" class="btn btn-primary">Update MTU</button>
                 </form>
                 <p class="mt-2 text-sm text-gray-500">Standard Ethernet MTU is 1500. Jumbo frames typically use 9000.</p>
             </div>
         </div>
+    </div>
     </div>
 </div>
 {{end}}

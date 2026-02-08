@@ -166,6 +166,9 @@ func (h *RoutesHandler) SaveRoutes(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *RoutesHandler) renderAlert(w http.ResponseWriter, alertType, message string) {
+	if alertType == "success" {
+		w.Header().Set("HX-Trigger", "refresh")
+	}
 	data := map[string]interface{}{
 		"Type":    alertType,
 		"Message": message,
