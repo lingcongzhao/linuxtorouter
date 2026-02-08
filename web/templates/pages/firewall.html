@@ -320,8 +320,8 @@ function setPolicy(table, chain, policy) {
             {{range .Chain.Rules}}
             <tr>
                 <td {{if .Comment}}style="cursor: help;" title="{{.Comment}}"{{end}}>{{.Num}}</td>
-                <td style="max-width: 10ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Target}}">
-                    <span class="badge {{if eq .Target "ACCEPT"}}badge-green{{else if eq .Target "DROP"}}badge-red{{else if eq .Target "REJECT"}}badge-red{{else}}badge-blue{{end}}" style="font-size: 0.7rem;">
+                <td title="{{.Target}}">
+                    <span class="badge {{if eq .Target "ACCEPT"}}badge-green{{else if eq .Target "DROP"}}badge-red{{else if eq .Target "REJECT"}}badge-red{{else}}badge-blue{{end}}" style="font-size: 0.7rem; max-width: 10ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block;">
                         {{.Target}}
                     </span>
                 </td>

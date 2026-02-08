@@ -24,7 +24,11 @@
       "Bash(ip rule:*)",
       "Bash(find:*)",
       "Bash(grep:*)",
-      "Bash(xargs -I {} sh -c 'echo \"\"=== {} ===\"\" && grep \"\"^func \"\" {}')"
+      "Bash(xargs -I {} sh -c 'echo \"\"=== {} ===\"\" && grep \"\"^func \"\" {}')",
+      "Bash(# Create test with long target sudo iptables -t filter -N LONGTARGETTEST sudo iptables -t filter -A INPUT -p tcp --dport 8888 -j LONGTARGETTEST # Fetch and check the span element curl -s -b /tmp/cookies.txt \"\"http://localhost:8090/firewall?table=filter&chain=INPUT\"\" grep \"\"LONGTARGETTEST\"\" /tmp/target_test.html)",
+      "Bash(# Test with a chain name longer than 10 characters sudo iptables -t filter -N VERYLONGCHAINNAME sudo iptables -t filter -A INPUT -p icmp -j VERYLONGCHAINNAME echo \"\"=== Target cell with long name ===\"\" curl -s -b /tmp/cookies.txt \"\"http://localhost:8090/firewall?table=filter&chain=INPUT\"\")",
+      "Bash(__NEW_LINE_15637c4c433d063e__ echo \"\")",
+      "Bash(# Create test and check full output sudo iptables -t filter -N EXTRALONGNAME sudo iptables -t filter -A INPUT -p tcp --dport 7777 -j EXTRALONGNAME # Get the full Target td element curl -s -b /tmp/cookies.txt \"\"http://localhost:8090/firewall?table=filter&chain=INPUT\"\")"
     ]
   }
 }
