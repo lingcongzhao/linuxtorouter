@@ -44,32 +44,29 @@ func (h *FirewallHandler) List(w http.ResponseWriter, r *http.Request) {
 
 	// Separate system chains from custom chains based on table
 	systemChainNames := getSystemChains(table)
-	var systemChains, customChains []models.ChainInfo
+	var systemChains []models.ChainInfo
 	var selectedChain *models.ChainInfo
 
 	for i := range chains {
 		if isSystemChain(chains[i].Name, systemChainNames) {
 			systemChains = append(systemChains, chains[i])
-		} else {
-			customChains = append(customChains, chains[i])
-			// Check if this is the selected custom chain
-			if chains[i].Name == selectedChainName {
-				selectedChain = &chains[i]
-			}
+		}
+		// Check if this is the selected chain (any chain, not just custom)
+		if chains[i].Name == selectedChainName {
+			selectedChain = &chains[i]
 		}
 	}
 
 	data := map[string]interface{}{
-		"Title":               "Firewall",
-		"ActivePage":          "firewall",
-		"User":                user,
-		"Chains":              chains,
-		"SystemChains":        systemChains,
-		"CustomChains":        customChains,
-		"SelectedChain":       selectedChain,
-		"SelectedCustomChain": selectedChainName,
-		"CurrentTable":        table,
-		"Tables":              []string{"filter", "nat", "mangle", "raw"},
+		"Title":             "Firewall",
+		"ActivePage":        "firewall",
+		"User":              user,
+		"Chains":            chains,
+		"SystemChains":      systemChains,
+		"SelectedChain":     selectedChain,
+		"SelectedChainName": selectedChainName,
+		"CurrentTable":      table,
+		"Tables":            []string{"filter", "nat", "mangle", "raw"},
 	}
 
 	if err := h.templates.ExecuteTemplate(w, "firewall.html", data); err != nil {
@@ -121,27 +118,24 @@ func (h *FirewallHandler) GetRules(w http.ResponseWriter, r *http.Request) {
 
 	// Separate system chains from custom chains
 	systemChainNames := getSystemChains(table)
-	var systemChains, customChains []models.ChainInfo
+	var systemChains []models.ChainInfo
 	var selectedChain *models.ChainInfo
 
 	for i := range chains {
 		if isSystemChain(chains[i].Name, systemChainNames) {
 			systemChains = append(systemChains, chains[i])
-		} else {
-			customChains = append(customChains, chains[i])
-			if chains[i].Name == selectedChainName {
-				selectedChain = &chains[i]
-			}
+		}
+		if chains[i].Name == selectedChainName {
+			selectedChain = &chains[i]
 		}
 	}
 
 	data := map[string]interface{}{
-		"Chains":              chains,
-		"SystemChains":        systemChains,
-		"CustomChains":        customChains,
-		"SelectedChain":       selectedChain,
-		"SelectedCustomChain": selectedChainName,
-		"CurrentTable":        table,
+		"Chains":            chains,
+		"SystemChains":      systemChains,
+		"SelectedChain":     selectedChain,
+		"SelectedChainName": selectedChainName,
+		"CurrentTable":      table,
 	}
 
 	if err := h.templates.ExecuteTemplate(w, "firewall_table.html", data); err != nil {

@@ -1,5 +1,44 @@
 {{define "firewall_table"}}
-<!-- System Chains -->
+{{if .SelectedChain}}
+<!-- Single Selected Chain -->
+<div class="card mb-4">
+    <div class="card-header flex justify-between items-center">
+        <div>
+            <h3 class="text-base font-semibold leading-6 text-gray-900">
+                {{.SelectedChain.Name}}
+                {{if ne .SelectedChain.Policy "-"}}
+                <span class="ml-2 badge {{if eq .SelectedChain.Policy "ACCEPT"}}badge-green{{else if eq .SelectedChain.Policy "DROP"}}badge-red{{else}}badge-yellow{{end}}">
+                    {{.SelectedChain.Policy}}
+                </span>
+                {{end}}
+            </h3>
+            <p class="text-sm text-gray-500">{{.SelectedChain.Packets}} packets, {{formatBytes .SelectedChain.Bytes}}</p>
+        </div>
+        <div class="flex space-x-2">
+            <button class="btn btn-sm btn-info" onclick="openAddRuleModal('{{.SelectedChain.Name}}')">+ Add Rule</button>
+            {{if ne .SelectedChain.Policy "-"}}
+            <div class="relative">
+                <select onchange="setPolicy('{{$.CurrentTable}}', '{{.SelectedChain.Name}}', this.value)" class="form-select text-sm py-1">
+                    <option value="">Set Policy</option>
+                    <option value="ACCEPT">ACCEPT</option>
+                    <option value="DROP">DROP</option>
+                </select>
+            </div>
+            {{else}}
+            <button class="btn btn-sm btn-danger"
+                    hx-delete="/firewall/chains/{{.SelectedChain.Name}}?table={{$.CurrentTable}}"
+                    hx-target="#alert-container"
+                    hx-swap="innerHTML"
+                    hx-confirm="Delete chain {{.SelectedChain.Name}}? All rules in this chain will be removed.">
+                Delete Chain
+            </button>
+            {{end}}
+        </div>
+    </div>
+    {{template "firewall_rule_table" dict "Chain" .SelectedChain "CurrentTable" $.CurrentTable}}
+</div>
+{{else}}
+<!-- System Chains (default view) -->
 {{range .SystemChains}}
 <div class="card mb-4">
     <div class="card-header flex justify-between items-center">
@@ -28,30 +67,6 @@
     {{template "firewall_rule_table" dict "Chain" . "CurrentTable" $.CurrentTable}}
 </div>
 {{end}}
-
-<!-- Selected Custom Chain -->
-{{if .SelectedChain}}
-<div class="card mb-4 border-2 border-indigo-300">
-    <div class="card-header flex justify-between items-center bg-indigo-50">
-        <div>
-            <h3 class="text-base font-semibold leading-6 text-gray-900">
-                <span class="text-indigo-600">Custom:</span> {{.SelectedChain.Name}}
-            </h3>
-            <p class="text-sm text-gray-500">{{.SelectedChain.Packets}} packets, {{formatBytes .SelectedChain.Bytes}}</p>
-        </div>
-        <div class="flex space-x-2">
-            <button class="btn btn-sm btn-info" onclick="openAddRuleModal('{{.SelectedChain.Name}}')">+ Add Rule</button>
-            <button class="btn btn-sm btn-danger"
-                    hx-delete="/firewall/chains/{{.SelectedChain.Name}}?table={{$.CurrentTable}}"
-                    hx-target="#alert-container"
-                    hx-swap="innerHTML"
-                    hx-confirm="Delete chain {{.SelectedChain.Name}}? All rules in this chain will be removed.">
-                Delete Chain
-            </button>
-        </div>
-    </div>
-    {{template "firewall_rule_table" dict "Chain" .SelectedChain "CurrentTable" $.CurrentTable}}
-</div>
 {{end}}
 {{end}}
 
@@ -59,16 +74,16 @@
 <div class="table-container" style="overflow-x: auto;">
     <table class="data-table" style="table-layout: fixed; width: 100%; min-width: 900px;">
         <colgroup>
-            <col style="width: 50px;">   <!-- # -->
+            <col>                        <!-- # -->
             <col style="width: 100px;">  <!-- Target -->
-            <col style="width: 55px;">   <!-- Protocol -->
-            <col style="width: 55px;">   <!-- In -->
-            <col style="width: 55px;">   <!-- Out -->
-            <col style="width: 120px;">  <!-- Source -->
-            <col style="width: 120px;">  <!-- Destination -->
-            <col style="width: 180px;">  <!-- Options -->
-            <col style="width: 95px;">   <!-- Packets/Bytes -->
-            <col style="width: 70px;">   <!-- Actions -->
+            <col>                        <!-- Protocol -->
+            <col>                        <!-- In -->
+            <col>                        <!-- Out -->
+            <col>                        <!-- Source -->
+            <col>                        <!-- Destination -->
+            <col style="width: 200px;">  <!-- Options -->
+            <col>                        <!-- Packets/Bytes -->
+            <col>                        <!-- Actions -->
         </colgroup>
         <thead>
             <tr>
@@ -90,7 +105,7 @@
             {{range .Chain.Rules}}
             <tr>
                 <td {{if .Comment}}style="cursor: help;" title="{{.Comment}}"{{end}}>{{.Num}}</td>
-                <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Target}}">
+                <td>
                     <span class="badge {{if eq .Target "ACCEPT"}}badge-green{{else if eq .Target "DROP"}}badge-red{{else if eq .Target "REJECT"}}badge-red{{else}}badge-blue{{end}}" style="font-size: 0.7rem;">
                         {{.Target}}
                     </span>
