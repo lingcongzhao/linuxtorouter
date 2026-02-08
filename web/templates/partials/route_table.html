@@ -35,10 +35,7 @@
                         <td>
                             {{if ne .Protocol "kernel"}}
                             <button type="button" class="btn btn-sm btn-danger"
-                                    hx-delete="/routes?destination={{.Destination}}&gateway={{.Gateway}}&interface={{.Interface}}&table={{$.CurrentTable}}"
-                                    hx-target="#alert-container" hx-swap="innerHTML"
-                                    hx-on::after-request="setTimeout(() => location.reload(), 100)"
-                                    hx-confirm="Delete route to {{.Destination}}?">
+                                    onclick="showConfirmModal('Delete route to {{.Destination}}?', '/routes?destination={{.Destination}}&gateway={{.Gateway}}&interface={{.Interface}}&table={{$.CurrentTable}}', 'DELETE')">
                                 Delete
                             </button>
                             {{else}}

@@ -52,10 +52,7 @@
                             <div class="flex space-x-2">
                                 {{if eq .State "UP"}}
                                 <button class="btn btn-sm btn-warning" style="width: 60px; text-align: center;"
-                                        hx-post="/interfaces/{{.Name}}/down"
-                                        hx-target="#alert-container"
-                                        hx-swap="innerHTML"
-                                        hx-confirm="Are you sure you want to bring down {{.Name}}?">
+                                        onclick="showConfirmModal('Are you sure you want to bring down {{.Name}}?', '/interfaces/{{.Name}}/down')">
                                     Down
                                 </button>
                                 {{else}}

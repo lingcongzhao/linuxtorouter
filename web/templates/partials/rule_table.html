@@ -37,11 +37,7 @@
                         <td>
                             {{if and (ne .Priority 0) (ne .Priority 32766) (ne .Priority 32767)}}
                             <button class="btn btn-sm btn-danger"
-                                    hx-delete="/rules/{{.Priority}}"
-                                    hx-target="#alert-container"
-                                    hx-swap="innerHTML"
-                                    hx-on::after-request="setTimeout(() => location.reload(), 100)"
-                                    hx-confirm="Delete rule with priority {{.Priority}}?">
+                                    onclick="showConfirmModal('Delete rule with priority {{.Priority}}?', '/rules/{{.Priority}}', 'DELETE')">
                                 Delete
                             </button>
                             {{else}}
