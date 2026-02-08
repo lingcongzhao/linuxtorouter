@@ -289,14 +289,14 @@ function setPolicy(table, chain, policy) {
 <div class="table-container" style="overflow-x: auto;">
     <table class="data-table" style="table-layout: fixed; width: 100%; min-width: 900px;">
         <colgroup>
-            <col>                        <!-- # -->
+            <col style="width: 3em;">    <!-- # (5 chars) -->
             <col style="width: 100px;">  <!-- Target -->
             <col>                        <!-- Protocol -->
             <col>                        <!-- In -->
             <col>                        <!-- Out -->
             <col>                        <!-- Source -->
             <col>                        <!-- Destination -->
-            <col style="width: 200px;">  <!-- Options -->
+            <col style="width: 135px;">  <!-- Options -->
             <col>                        <!-- Packets/Bytes -->
             <col>                        <!-- Actions -->
         </colgroup>
@@ -320,7 +320,7 @@ function setPolicy(table, chain, policy) {
             {{range .Chain.Rules}}
             <tr>
                 <td {{if .Comment}}style="cursor: help;" title="{{.Comment}}"{{end}}>{{.Num}}</td>
-                <td>
+                <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{.Target}}">
                     <span class="badge {{if eq .Target "ACCEPT"}}badge-green{{else if eq .Target "DROP"}}badge-red{{else if eq .Target "REJECT"}}badge-red{{else}}badge-blue{{end}}" style="font-size: 0.7rem;">
                         {{.Target}}
                     </span>
